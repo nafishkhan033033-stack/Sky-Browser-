@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>SkyBrowser</title>
+<style>
+:root{--bg:#eef3f8;--panel:#fff;--text:#162b45;--muted:#718096;--line:#dbe4ee;--accent:#2478ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+body.dark{--bg:#101722;--panel:#182231;--text:#edf4ff;--muted:#9aa9bd;--line:#2c394b}
+.app{height:100vh;display:flex;flex-direction:column;max-width:1400px;margin:auto;background:var(--panel)}
+.tabs{height:48px;background:#e8eef6;display:flex;align-items:flex-end;padding:6px 8px 0;gap:5px}.dark .tabs{background:#111a26}
+.tab{height:40px;min-width:170px;max-width:240px;background:var(--panel);border-radius:12px 12px 0 0;padding:11px 14px;display:flex;justify-content:space-between;cursor:pointer;font-size:14px}.tab.active{box-shadow:0 -2px 0 var(--accent) inset}.newtab{font-size:25px;padding:5px 14px;cursor:pointer}
+.toolbar{display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--line)}button{font:inherit}.iconbtn{border:0;background:transparent;font-size:21px;cursor:pointer;padding:6px}.address{flex:1;background:#eef3f8;border:1px solid var(--line);border-radius:22px;padding:11px 16px;outline:none;color:var(--text)}.dark .address{background:#111a26}
+.page{flex:1;overflow:auto;background:linear-gradient(145deg,#1377c8,#83c6ed 48%,#f6d7a0);position:relative}.dark .page{background:linear-gradient(145deg,#101b2b,#203653 60%,#18202b)}
+.home{min-height:100%;padding:42px 7%}.brand{text-align:center;color:white}.logo{font-size:48px;font-weight:800;letter-spacing:-2px}.tag{font-size:16px;opacity:.9}.search{max-width:760px;margin:35px auto;display:flex;background:white;border-radius:30px;padding:7px;box-shadow:0 12px 35px #0003}.search input{flex:1;border:0;outline:0;padding:13px 18px;font-size:16px}.search button{border:0;border-radius:25px;background:var(--accent);color:white;padding:0 20px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;max-width:1050px;margin:auto}.card{background:#ffffffdd;border:1px solid #fff8;border-radius:22px;padding:20px;color:#18314f}.card h3{margin-top:0}.shortcuts{display:flex;flex-wrap:wrap;gap:10px}.shortcut{background:#fff;padding:13px 18px;border-radius:16px;cursor:pointer;border:1px solid #dce5ee}
+.panel{position:absolute;right:0;top:0;bottom:0;width:340px;background:var(--panel);box-shadow:-8px 0 30px #0003;padding:22px;overflow:auto;z-index:5}.panel h2{margin-top:0}.menuitem{padding:13px;border-radius:12px;cursor:pointer;margin:4px 0}.menuitem:hover{background:#eaf1fa}.dark .menuitem:hover{background:#233044}.switch{display:flex;justify-content:space-between;align-items:center;padding:11px 0}.switch input{width:44px;height:24px}
+.overlay{position:absolute;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:10}.dialog{background:var(--panel);color:var(--text);width:min(520px,90%);border-radius:22px;padding:25px}.dialog input,.dialog textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;margin:7px 0 12px;background:var(--bg);color:var(--text)}.primary{border:0;background:var(--accent);color:white;padding:11px 17px;border-radius:12px}.hidden{display:none}.status{font-size:12px;color:var(--muted);padding:7px 14px;border-bottom:1px solid var(--line)}
+@media(max-width:700px){.tab{min-width:120px}.cards{grid-template-columns:1fr}.panel{width:86%}.home{padding:35px 18px}.logo{font-size:40px}.toolbar{gap:3px}.hideMobile{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="tabs" id="tabs"><div class="tab active" data-tab="1"><span>🌤️ New Tab</span><span onclick="closeTab(event,1)">×</span></div><div class="newtab" onclick="newTab()">+</div></div>
+<div class="toolbar">
+<button class="iconbtn" onclick="goBack()">←</button><button class="iconbtn" onclick="goForward()">→</button><button class="iconbtn" onclick="reload()">↻</button>
+<input id="url" class="address" value="sky://home" onkeydown="if(event.key==='Enter')navigate()">
+<button class="iconbtn" onclick="bookmark()">☆</button><button class="iconbtn" onclick="togglePanel()">⋮</button>
+</div>
+<div class="status" id="status">SkyBrowser • Ready • Privacy Guard active</div>
+<div class="page" id="page"><div class="home">
+<div class="brand"><div class="logo">☁️ SkyBrowser</div><div class="tag">Fast • Private • Smart</div></div>
+<div class="search"><input id="search" placeholder="Search the web or enter a URL" onkeydown="if(event.key==='Enter')searchWeb()"><button onclick="searchWeb()">Search</button></div>
+<div class="cards">
+<div class="card"><h3>⚡ Quick access</h3><div class="shortcuts"><div class="shortcut" onclick="searchSite('Google')">Google</div><div class="shortcut" onclick="searchSite('YouTube')">YouTube</div><div class="shortcut" onclick="searchSite('Wikipedia')">Wikipedia</div><div class="shortcut" onclick="searchSite('News')">News</div></div></div>
+<div class="card"><h3>🛡️ Privacy</h3><p>Ad blocker: <b id="adstate">ON</b></p><p>Tracker protection: <b>ON</b></p><button class="primary" onclick="toggleAd()">Toggle Ad Blocker</button></div>
+<div class="card"><h3>🌦️ Today</h3><p id="weather">28°C • New Delhi</p><button class="primary" onclick="weather()">Refresh weather</button></div>
+</div></div></div>
+<div id="panel" class="panel hidden"><h2>☁️ SkyBrowser</h2>
+<div class="menuitem" onclick="home()">🏠 Home</div><div class="menuitem" onclick="showBookmarks()">⭐ Bookmarks</div><div class="menuitem" onclick="showHistory()">🕘 History</div><div class="menuitem" onclick="showDownloads()">⬇️ Downloads</div><div class="menuitem" onclick="showPasswords()">🔐 Passwords</div><div class="menuitem" onclick="showExtensions()">🧩 Extensions</div><div class="menuitem" onclick="settings()">⚙️ Settings</div><hr>
+<div class="switch">🌙 Dark Mode <input type="checkbox" id="dark" onchange="darkMode(this.checked)"></div>
+<div class="switch">🛡️ Ad Blocker <input type="checkbox" id="ad" checked onchange="toggleAd()"></div>
+<div class="menuitem" onclick="translatePage()">🌐 Translator</div><div class="menuitem" onclick="takeScreenshot()">📸 Screenshot</div><div class="menuitem" onclick="show('Privacy Guard','SkyBrowser blocks common trackers and unsafe navigation requests in this demo.')">🔒 Privacy Guard</div>
+</div>
+<div id="modal" class="overlay hidden"><div class="dialog"><h2 id="mtitle"></h2><div id="mbody"></div><button class="primary" onclick="hideModal()">Close</button></div></div>
+</div>
+<script>
+let historyList=[],bookmarks=[],tabs=1,adOn=true;
+const $=id=>document.getElementById(id);
+function show(t,b){$('mtitle').textContent=t;$('mbody').innerHTML=b;$('modal').classList.remove('hidden')}
+function hideModal(){$('modal').classList.add('hidden')}
+function togglePanel(){$('panel').classList.toggle('hidden')}
+function home(){$('panel').classList.add('hidden');$('url').value='sky://home';$('status').textContent='SkyBrowser • Home';location.hash='home'}
+function searchWeb(){let q=$('search').value.trim();if(!q)return;let target=/^https?:\/\//i.test(q)?q:'https://www.google.com/search?q='+encodeURIComponent(q);navigateTo(target)}
+function navigate(){let q=$('url').value.trim();if(!q)return;let target=/^(https?:\/\/|sky:\/\/)/i.test(q)?q:'https://www.google.com/search?q='+encodeURIComponent(q);navigateTo(target)}
+function navigateTo(u){$('url').value=u;historyList.unshift(u);historyList=historyList.slice(0,30);$('status').textContent='Opening • '+u;show('Navigation preview','This demo browser UI is ready for a real web engine.\\n<br><br><b>'+u+'</b><br><br>For security, this ZIP does not embed a full Chromium engine.')}
+function searchSite(n){$('search').value=n;searchWeb()}
+function newTab(){tabs++;let d=document.createElement('div');d.className='tab active';d.dataset.tab=tabs;d.innerHTML='<span>🌤️ New Tab</span><span onclick="closeTab(event,'+tabs+')">×</span>';document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));$('tabs').insertBefore(d,document.querySelector('.newtab'))}
+function closeTab(e,id){e.stopPropagation();let el=document.querySelector('[data-tab="'+id+'"]');if(el&&document.querySelectorAll('.tab').length>1)el.remove()}
+function reload(){show('Reload','SkyBrowser is ready to reload the current page.')}
+function goBack(){show('Back','No previous external page is loaded in this demo.')}
+function goForward(){show('Forward','No forward page is loaded in this demo.')}
+function bookmark(){let u=$('url').value;bookmarks.push(u);show('Bookmark saved','Saved: <b>'+u+'</b>')}
+function showBookmarks(){show('Bookmarks',bookmarks.length?bookmarks.map(x=>'⭐ '+x).join('<br>'):'No bookmarks yet.')}
+function showHistory(){show('History',historyList.length?historyList.map(x=>'🕘 '+x).join('<br>'):'No browsing history yet.')}
+function showDownloads(){show('Downloads','No downloads yet. Future version can connect to a download manager.')}
+function showPasswords(){show('Passwords','Password manager UI placeholder. Never store real passwords in this demo.')}
+function showExtensions(){show('Extensions','Extension manager ready for future browser-engine integration.')}
+function settings(){show('Settings','SkyBrowser v1.0<br><br>Future-ready architecture: tabs, privacy controls, bookmarks, history, downloads, extensions and themes.')}
+function darkMode(v){document.body.classList.toggle('dark',v)}
+function toggleAd(){adOn=!adOn;$('adstate').textContent=adOn?'ON':'OFF';$('ad').checked=adOn;$('status').textContent='Ad Blocker '+(adOn?'ON':'OFF')}
+function translatePage(){show('Translator','Choose a language in the full version. Hindi 🇮🇳 • English 🇬🇧 • Gujarati 🇮🇳 • Urdu 🇵🇰')}
+function takeScreenshot(){show('Screenshot','Screenshot tool is ready as a UI feature. A native Android/iOS build can connect this to device capture APIs.')}
+function weather(){$('weather').textContent='28°C • New Delhi • Updated just now';}
+</script>
+</body>
+</html>
