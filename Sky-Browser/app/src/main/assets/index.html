@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>SkyBrowser</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+            text-align: center;
+        }
+
+        .header {
+            padding: 35px 20px 20px;
+        }
+
+        .logo {
+            font-size: 42px;
+            font-weight: bold;
+            color: #1976d2;
+        }
+
+        .subtitle {
+            font-size: 15px;
+            color: #667085;
+            margin-top: 8px;
+        }
+
+        .search-box {
+            margin: 25px auto;
+            max-width: 650px;
+            padding: 0 20px;
+        }
+
+        .search {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid #d0d5dd;
+            border-radius: 30px;
+            font-size: 16px;
+            outline: none;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            margin: 6px;
+            padding: 12px 20px;
+            border-radius: 25px;
+            background: #1976d2;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .card {
+            margin: 30px auto;
+            max-width: 650px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            color: #667085;
+            font-size: 13px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="header">
+
+        <div class="logo">
+            ☁ SkyBrowser
+        </div>
+
+        <div class="subtitle">
+            Fast • Simple • Private
+        </div>
+
+    </div>
+
+    <div class="search-box">
+
+        <input
+            class="search"
+            id="search"
+            type="text"
+            placeholder="Search the web..."
+            onkeydown="searchWeb(event)">
+
+        <div class="buttons">
+
+            <a
+                class="button"
+                href="https://www.google.com">
+                Google
+            </a>
+
+            <a
+                class="button"
+                href="https://www.youtube.com">
+                YouTube
+            </a>
+
+            <a
+                class="button"
+                href="https://www.wikipedia.org">
+                Wikipedia
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Welcome to SkyBrowser</h2>
+
+        <p>
+            Enter a website or search query
+            in the address bar above.
+        </p>
+
+        <p>
+            SkyBrowser is your simple Android web browser.
+        </p>
+
+    </div>
+
+    <div class="footer">
+        SkyBrowser © 2026
+    </div>
+
+    <script>
+
+        function searchWeb(event) {
+
+            if (event.key === "Enter") {
+
+                let query =
+                    document.getElementById("search")
+                    .value
+                    .trim();
+
+                if (query !== "") {
+
+                    window.location.href =
+                        "https://www.google.com/search?q="
+                        + encodeURIComponent(query);
+                }
+            }
+        }
+
+    </script>
+
+</body>
+
+</html>
